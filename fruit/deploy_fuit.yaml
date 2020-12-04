@@ -8,6 +8,7 @@ spec:
   - port: 5678
   selector:
     app: apple
+  type: NodePor
 ---
 apiVersion: v1
 kind: Service
@@ -19,6 +20,7 @@ spec:
   - port: 5678
   selector:
     app: banana
+  type: NodePor
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
