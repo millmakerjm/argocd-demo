@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: apple-service
+  namespace: ingress-test
+spec:
+  ports:
+  - port: 5678
+  selector:
+    app: apple
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: banana-service
+  namespace: ingress-test
+spec:
+  ports:
+  - port: 5678
+  selector:
+    app: banana
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
+  name: example-ingress
+  namespace: ingress-test
+spec:
+  rules:
+  - host: fruit-demo2.devops-infratest.tnl-edsn.nl
+    http:
+      paths:
+      - backend:
+          serviceName: apple-service
+          servicePort: 5678
+        path: /apple
+      - backend:
+          serviceName: banana-service
+          servicePort: 5678
+        path: /banana
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: apple
+  name: apple-app
+  namespace: ingress-test
+spec:
+  containers:
+  - args:
+    - -text=apple
+    image: hashicorp/http-echo
+    name: apple-app
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: banana
+  name: banana-app
+  namespace: ingress-test
+spec:
+  containers:
+  - args:
+    - -text=banana
+    image: hashicorp/http-echo
+    name: banana-app
